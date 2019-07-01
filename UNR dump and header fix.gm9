@@ -1,0 +1,197 @@
+echo "Hi, this is my first real script\nwhich will dump the roms from Ultimate nes remix"
+if not ask "Do you want to continue?"
+    goto end
+end
+
+if not find -o -s "C:/*trim.3ds" CARTRIDGE
+    echo "Where is your 3ds cart?"
+    goto end
+end
+
+imgmount $[CARTRIDGE]
+
+if not cp G:/content0.game/romfs/emu/rom 0:/gm9/out/UNR
+	echo "Failed to copy"
+	imgumount
+	goto end
+end
+
+imgumount 
+echo "done"
+if not ask "Do you want to fix their header?" 
+	goto end
+end
+set UNR 0:/gm9/out/UNR
+goto BALLOON_FIGHT
+
+@BALLOON_FIGHT
+if not fset $[UNR]/BALLOON 4E45531A01010000
+	goto error
+end
+mv $[UNR]/BALLOON $[UNR]/Balloonfight.nes
+goto EXCITEBIKE
+
+@EXCITEBIKE
+if not fset $[UNR]/BIKE 4E45531A01010100
+	goto error
+end
+mv $[UNR]/BIKE $[UNR]/Excitebike.nes
+goto DK1
+
+@DK1
+if not fset $[UNR]/DK1 4E45531A01010000
+	goto error
+end
+mv $[UNR]/DK1 $[UNR]/DonkeyKong.nes
+goto DK2
+
+@DK2
+if not fset $[UNR]/DK2 4E45531A01010100
+	goto error
+end
+mv $[UNR]/DK2 $[UNR]/DonkeyKongJr.nes
+goto DOCTOR
+
+@DOCTOR
+if not fset $[UNR]/DOCTOR 4E45531A02041000
+	goto error
+end
+mv $[UNR]/DOCTOR $[UNR]/DrMario.nes
+goto UsIKARUS
+
+@UsIKARUS
+if not fset $[UNR]/UsIKARUS 4E45531A08001100
+	goto error
+end
+mv $[UNR]/UsIKARUS $[UNR]/KidIcarusUS.nes
+goto KIRBY
+
+@KIRBY
+if not fset $[UNR]/KIRBY 4E45531A20204200
+	goto error
+end
+mv $[UNR]/KIRBY $[UNR]/KirbyJP.nes
+goto UsKIRBY
+
+@UsKIRBY
+if not fset $[UNR]/UsKIRBY 4E45531A20204200
+	goto error
+end
+mv $[UNR]/UsKIRBY $[UNR]/KirbyUS.nes
+goto MB
+
+@MB
+if not fset $[UNR]/MB 4E45531A01010000
+	goto error
+end
+mv $[UNR]/MB $[UNR]/MarioBros.nes
+goto PUNCH
+
+@PUNCH
+if not fset $[UNR]/PUNCH 4E45531A00109000
+	goto error
+end
+mv $[UNR]/PUNCH $[UNR]/PunchOut.nes
+goto SMB1
+
+@SMB1
+if not fset $[UNR]/SMB1 4E45531A02010100
+	goto error
+end
+mv $[UNR]/SMB1 $[UNR]/SuperMarioBros.nes
+goto SMB3
+
+@SMB3
+if not fset $[UNR]/SMB3 4E45531A10104000
+	goto error
+end
+mv $[UNR]/SMB3 $[UNR]/SuperMarioBros3JP.nes
+goto UsSMB3
+
+@UsSMB3
+if not fset $[UNR]/UsSMB3 4E45531A10104000
+	goto error
+end
+mv $[UNR]/UsSMB3 $[UNR]/SuperMarioBros3USA.nes
+goto SMBUSA
+
+@SMBUSA
+if not fset $[UNR]/SMBUSA 4E45531A00104000
+	goto error
+end
+mv $[UNR]/SMBUSA $[UNR]/SuperMarioBrosUSA.nes
+goto UsSMBUSA
+
+@UsSMBUSA
+if not fset $[UNR]/UsSMBUSA 4E45531A00104000
+	goto error
+end
+mv $[UNR]/UsSMBUSA $[UNR]/SuperMarioBros2.nes
+goto UsMETROID
+
+@UsMETROID
+if not fset $[UNR]/UsMETROID 4E45531A08001000
+	goto error
+end
+mv $[UNR]/UsMETROID $[UNR]/MetroidUSA.nes
+goto ZELDA
+
+@ZELDA
+if not fset $[UNR]/ZELDA 4E45531A08001200
+	goto error
+end
+mv $[UNR]/ZELDA $[UNR]/LegendOfZeldaJP.nes
+goto UsZELDA
+
+@UsZELDA
+if not fset $[UNR]/UsZELDA 4E45531A08001200
+	goto error
+end
+mv $[UNR]/UsZELDA $[UNR]/LegendOfZeldaUSA.nes
+goto UsZELDA2
+
+@UsZELDA2
+if not fset $[UNR]/UsZELDA2 4E45531A08191200
+	goto error
+end
+mv $[UNR]/UsZELDA2 $[UNR]/LegendOfZelda2USA.nes
+goto uselessDel
+
+@uselessDel
+if ask "Do you want to delete\nuseless files and roms that cannot be fixed?\nThis includes FDS roms and patches that were included \nwith the roms."
+	rm $[UNR]/KIRBY.patch
+	rm $[UNR]/METROID.patch
+	rm $[UNR]/UsKIRBY.patch
+	rm $[UNR]/ZELDA2.patch
+	goto fdsdel
+end
+if ask "Do you only want to delete FDS roms?"
+	goto fdsdel
+end
+if ask "Do you only want to delete the patches?"
+	goto patchdel
+end
+goto end
+
+@fdsdel
+rm $[UNR]/ICARUS
+rm $[UNR]/METROID
+rm $[UNR]/SMB2
+rm $[UNR]/ZELDA2
+goto end
+
+@patchdel
+rm $[UNR]/KIRBY.patch
+rm $[UNR]/METROID.patch
+rm $[UNR]/UsKIRBY.patch
+rm $[UNR]/ZELDA2.patch
+goto end
+
+@error 
+echo "Something went wrong with your roms"
+goto end
+
+@end
+echo "Thanks for testing :)"
+echo "Thanks to validusername16\naspargas2\win9x\nfor helping me making this script"
+qr "here's my Github repo on tutorials \nfor the Nintendo 3DS" "https://github.com/GlaZedBelmont/3DS-Tutorials"
